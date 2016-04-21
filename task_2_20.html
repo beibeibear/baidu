@@ -1,0 +1,137 @@
+<!DOCTYPE>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		#text {
+			width: 400px;
+		}
+		#display li {
+			list-style: none;
+			float: left;
+			margin: 20px;
+			height: 50px;
+			background-color: gray;
+			color: orange;
+			font-size: 20px;
+			line-height: 50px;
+			text-align: center;
+		}
+	</style>
+</head>
+<body>
+<textarea id="text"></textarea>
+<input id="left-in" type="button" value="左侧入">
+<input id="right-in" type="button" value="右侧入">
+<input id="left-out" type="button" value="左侧出">
+<input id="right-out" type="button" value="右侧出">
+<input id="search" type="text">
+<input id="search-button" type="button" value="点我进行查询，支持分组查询">
+<input id="reset" type="button" value="重置">
+<ul id="display"></ul>
+<script>
+       function $(id){
+	          return document.getElementById(id);
+	   }
+	   function addEvent(element,type,handler){
+	         if(element.addEventListener){
+			    element.addEventListener(type,handler,false);
+			 }else if(element.attachEvent){
+			    element.attachEvent("on"+type,handler);
+			   
+			 }else{
+			    element["on"+type]=handler;
+			 }
+			 
+	   }
+	var text = $("text");
+    var leftIn = $("left-in");
+    var leftOut = $("left-out");
+    var rightIn = $("right-in");
+    var rightOut = $("right-out");
+    var display = $("display");
+    var arrLi = display.getElementsByTagName("li");
+    var search = $("search");
+    var btn = $("search-button");
+    var reset = $("reset");
+    var num = [];
+	
+	
+	 function getResult(str) {
+        return str.replace(/[^\d\u4e00-\u9fa5a-zA-Z]+/g, " ").split(" ");
+    }
+	
+	addEvent(leftIn,"click",function(){
+	    if(text.value!=null){
+		    var result=getResult(text.value);
+			for(var i=result.length-1;i>=0;i--){
+			    num.unshift(result[i]);
+				var li=document.createElement('li');
+				li.innerHTML=result[i];
+				display.insertBefore(li,display.firstChild);
+			}
+		}else{
+		    alert("输入不能为空");
+		}
+	});
+	addEvent(leftOut,"click",function(){
+	     if(display.firstChild!=null){
+		      num.shift();
+8		 }else{
+		     alert("已经空了，没有可移除的了");
+		    }
+	});
+	addEvent(rightIn,"click",function(){
+	    if(text.value!=null){
+		    var result=getResult(text.value);
+			for(var i=0;i<result.length;i++){
+			    num.push(result[i]);
+				var li=document.createElement('li');
+				li.innerHTML=result[i];
+				display.appendChild(li);
+			}
+		}else{
+		    alert("输入不能为空");
+		}
+	});
+	addEvent(rightOut,"click",function(){
+	     if(display.lastChild!=null){
+		      num.pop();
+			  display.removeChild(display.lastChild);
+		 }else{
+		     alert("已经空了，没有可移除的了");
+		    }
+	});
+	
+	 addEvent(btn, "click", function () {
+        var pos,
+            i,
+            j;
+        if (search.value !== "") {
+            var find = search.value.replace(/[^\d\u4e00-\u9fa5a-zA-Z]+/g, " ").split(" ");
+            for (i = 0, len = find.length; i< len; i++) {
+                for (j = 0, numLength = num.length; j < numLength; j++) {
+                    pos = num[j].search(find[i]);
+                    if (pos >= 0) {
+                        arrLi[j].style.background = "yellow";
+                    }
+                }
+            }
+        } else {
+            alert("请输入想要查询的内容！");
+        }
+    });//模糊查询
+	
+	
+	addEvent(reset,"click",function(){
+	    display.innerHTML="";
+		num=[];
+	});
+</script>
+</body>
+</html>
